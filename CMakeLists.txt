@@ -32,6 +32,9 @@ qt_add_qml_module(appVMI_UI
         ./assets/labmov.png
         ./assets/logo.png
         ./assets/logo2.png
+        QML_FILES ui/screens/Graph.qml
+        QML_FILES ui/screens/Storage.qml
+        QML_FILES ui/screens/Settings.qml
 )
 
 # Qt for iOS sets MACOSX_BUNDLE_GUI_IDENTIFIER automatically since Qt 6.1.
