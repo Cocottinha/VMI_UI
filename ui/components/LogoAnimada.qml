@@ -1,5 +1,6 @@
 import QtQuick
 import QtQuick.Effects
+import QtQuick.Shapes
 Item {
     id: logoAnimationScreen
     width: 500
@@ -42,47 +43,112 @@ Item {
             // }
         }
         // 2. Feixe de Luz (Arco-íris) subindo e descendo
-        Rectangle {
-                    id: horizontalBar
-                    width: 400
-                    radius: 10
-                    height: 5 // Altura da barra
-                    color: "#222222" // Cor da barra (você pode mudar para qualquer cor ou usar um Gradiente)
+        // Rectangle {
+        //             id: horizontalBar
+        //             width: 400
+        //             radius: 10
+        //             height: 5 // Altura da barra
+        //             color: "#222222" // Cor da barra (você pode mudar para qualquer cor ou usar um Gradiente)
 
-                    // Centralizada horizontalmente, e com o Y animado
-                    anchors.horizontalCenter: parent.horizontalCenter
-                    y: 0 // Posição base inicial
-                    layer.enabled: true
-                                layer.effect: MultiEffect {
-                                    shadowEnabled: true      // Ativa a sombra
-                                    shadowColor: "#30000000" // Cor da sombra (com transparência)
-                                    shadowBlur: 0.5          // Suavidade/desfoque da sombra
-                                    shadowVerticalOffset: 6  // Deslocamento para baixo
-                                    shadowHorizontalOffset: 2
-                                }
-                    // Animação contínua de subida e descida sem trancos
-                    SequentialAnimation {
-                        running: true
-                        loops: Animation.Infinite
+        //             // Centralizada horizontalmente, e com o Y animado
+        //             anchors.horizontalCenter: parent.horizontalCenter
+        //             y: 0 // Posição base inicial
+        //             layer.enabled: true
+        //                         layer.effect: MultiEffect {
+        //                             shadowEnabled: true      // Ativa a sombra
+        //                             shadowColor: "#30000000" // Cor da sombra (com transparência)
+        //                             shadowBlur: 0.5          // Suavidade/desfoque da sombra
+        //                             shadowVerticalOffset: 6  // Deslocamento para baixo
+        //                             shadowHorizontalOffset: 2
+        //                         }
+        //             // Animação contínua de subida e descida sem trancos
+        //             SequentialAnimation {
+        //                 running: true
+        //                 loops: Animation.Infinite
 
-                        NumberAnimation {
-                            target: horizontalBar
-                            property: "y"
-                            from: -20    // Ponto mais alto que ela sobe
-                            to: 390     // Ponto mais baixo que ela desce
-                            duration: 2500
-                            easing.type: Easing.InOutSine
-                        }
-                        NumberAnimation {
-                            target: horizontalBar
-                            property: "y"
-                            from: 390
-                            to: -20
-                            duration: 2500
-                            easing.type: Easing.InOutSine
-                        }
+        //                 NumberAnimation {
+        //                     target: horizontalBar
+        //                     property: "y"
+        //                     from: -20    // Ponto mais alto que ela sobe
+        //                     to: 390     // Ponto mais baixo que ela desce
+        //                     duration: 2500
+        //                     easing.type: Easing.InOutSine
+        //                 }
+        //                 NumberAnimation {
+        //                     target: horizontalBar
+        //                     property: "y"
+        //                     from: 390
+        //                     to: -20
+        //                     duration: 2500
+        //                     easing.type: Easing.InOutSine
+        //                 }
+        //             }
+
+        //         }
+        Shape {
+                id: lightConeShape
+                width: 450
+                height: 400
+
+                // Posiciona o container do desenho para alinhar com o topo
+                x: -80
+                y: (parent.height - height) / 2
+
+                // Ponto de rotação (ponta do cone)
+                transformOrigin: Item.Left
+
+                // Define o formato do triângulo
+                data: ShapePath {
+                    id: conePath
+                    strokeWidth: 1
+                    strokeColor: "transparent"
+
+                    // Preenchimento com Gradiente com Fade-Out na base
+                    fillGradient: LinearGradient {
+                        x1: 0; y1: 200   // Topo (ponta do cone)
+                        x2: 450; y2: 200 // Base do cone
+
+                        // Cores do gradiente ajustadas para sumir na base:
+                        GradientStop { position: 0.0; color: "#A0FFFFE0" } // Bem visível no topo
+                        GradientStop { position: 0.5; color: "#50FFD700" } // Começa a suavizar no meio
+                        GradientStop { position: 1.0; color: "#00FFD700" } // 100% transparente (invisível) exatamente na base
                     }
 
+                    // Coordenadas dos três pontos do triângulo (mantendo o tamanho que você pediu)
+                    startX: 0; startY: 200
+
+                    // Vai para o canto inferior direito da base
+                    PathLine { x: 450; y: 0 }
+
+                    // Vai para o canto inferior esquerdo da base
+                    PathLine { x: 450; y: 400 }
+
+                    // Fecha o caminho voltando para a ponta superior
+                    PathLine { x: 0; y: 200 }
                 }
+
+                // Animação de pêndulo
+                SequentialAnimation {
+                    running: true
+                    loops: Animation.Infinite
+
+                    NumberAnimation {
+                        target: lightConeShape
+                        property: "rotation"
+                        from: -15
+                        to: 15
+                        duration: 2000
+                        easing.type: Easing.InOutSine
+                    }
+                    NumberAnimation {
+                        target: lightConeShape
+                        property: "rotation"
+                        from: 15
+                        to: -15
+                        duration: 2000
+                        easing.type: Easing.InOutSine
+                    }
+                }
+            }
     }
 }
