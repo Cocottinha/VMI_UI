@@ -87,66 +87,84 @@ Item {
         //         }
         Shape {
                 id: lightConeShape
-                width: 450
-                height: 400
+                width: 400
+                height: 450
 
-                // Posiciona o container do desenho para alinhar com o topo
-                x: -80
-                y: (parent.height - height) / 2
+                // Posição do Shape na tela
+                x: 240
+                y: 0
 
-                // Ponto de rotação (ponta do cone)
-                transformOrigin: Item.Left
+                // Método 2: Usando o componente Rotation para definir o eixo exato na ponta do triângulo
+                transform: Rotation {
+                    id: coneRotation
+                    origin.x: 200  // Eixo X exato correspondente ao startX da ponta
+                    origin.y: 0    // Eixo Y exato correspondente ao startY da ponta
+                    angle: 45      // Ângulo inicial
+                }
 
-                // Define o formato do triângulo
                 data: ShapePath {
                     id: conePath
                     strokeWidth: 1
                     strokeColor: "transparent"
 
-                    // Preenchimento com Gradiente com Fade-Out na base
                     fillGradient: LinearGradient {
-                        x1: 0; y1: 200   // Topo (ponta do cone)
-                        x2: 450; y2: 200 // Base do cone
+                        x1: 200; y1: 0
+                        x2: 200; y2: 450
 
-                        // Cores do gradiente ajustadas para sumir na base:
-                        GradientStop { position: 0.0; color: "#A0FFFFE0" } // Bem visível no topo
-                        GradientStop { position: 0.5; color: "#50FFD700" } // Começa a suavizar no meio
-                        GradientStop { position: 1.0; color: "#00FFD700" } // 100% transparente (invisível) exatamente na base
+                        GradientStop { position: 0.0; color: "#A0FFFFE0" }
+                        GradientStop { position: 0.5; color: "#50FFD700" }
+                        GradientStop { position: 1.0; color: "#00FFD700" }
                     }
 
-                    // Coordenadas dos três pontos do triângulo (mantendo o tamanho que você pediu)
-                    startX: 0; startY: 200
-
-                    // Vai para o canto inferior direito da base
-                    PathLine { x: 450; y: 0 }
-
-                    // Vai para o canto inferior esquerdo da base
-                    PathLine { x: 450; y: 400 }
-
-                    // Fecha o caminho voltando para a ponta superior
-                    PathLine { x: 0; y: 200 }
+                    startX: 200; startY: 0
+                    PathLine { x: 400; y: 450 }
+                    PathLine { x: 0; y: 450 }
+                    PathLine { x: 200; y: 0 }
                 }
 
-                // Animação de pêndulo
-                SequentialAnimation {
+                // Animação simultânea: Balanço de pêndulo alterando o angle + Piscar (Opacidade)
+                ParallelAnimation {
                     running: true
                     loops: Animation.Infinite
 
-                    NumberAnimation {
-                        target: lightConeShape
-                        property: "rotation"
-                        from: -15
-                        to: 15
-                        duration: 2000
-                        easing.type: Easing.InOutSine
+                    // 1. Movimento de Pêndulo alterando o 'angle' do componente Rotation
+                    SequentialAnimation {
+                        NumberAnimation {
+                            target: coneRotation
+                            property: "angle"
+                            from: 35
+                            to: 65
+                            duration: 2000
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            target: coneRotation
+                            property: "angle"
+                            from: 65
+                            to: 35
+                            duration: 2000
+                            easing.type: Easing.InOutSine
+                        }
                     }
-                    NumberAnimation {
-                        target: lightConeShape
-                        property: "rotation"
-                        from: 15
-                        to: -15
-                        duration: 2000
-                        easing.type: Easing.InOutSine
+
+                    // 2. Efeito de Piscar (Fade In / Fade Out suave)
+                    SequentialAnimation {
+                        NumberAnimation {
+                            target: lightConeShape
+                            property: "opacity"
+                            from: 0.6
+                            to: 1.0
+                            duration: 1000
+                            easing.type: Easing.InOutSine
+                        }
+                        NumberAnimation {
+                            target: lightConeShape
+                            property: "opacity"
+                            from: 1.0
+                            to: 0.6
+                            duration: 1000
+                            easing.type: Easing.InOutSine
+                        }
                     }
                 }
             }
